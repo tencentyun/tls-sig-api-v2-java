@@ -1,0 +1,88 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.json/json
+    compile group: 'org.json', name: 'json', version: '20180130'
+    // https://mvnrepository.com/artifact/junit/junit
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+sourceCompatibility = 1.6
+version = '1.0'
+group = "com.github.tencentyun"
+archivesBaseName = "tls-sig-api-v2"
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+tasks.withType(Javadoc) {
+    options.encoding = 'UTF-8'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'tls-sig-api-v2'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'tls sig api v2 for java'
+                url 'https://github.com/tencentyun/tls-sig-api-v2-java'
+
+                scm {
+                    connection 'scm:git:git://github.com/tencentyun/tls-sig-api-v2-java.git'
+                    developerConnection 'scm:git:ssh://git@github.com:tencentyun/tls-sig-api-v2-java.git'
+                    url 'https://github.com/tencentyun/tls-sig-api-v2-java'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'weijunyi'
+                        name 'weijunyi'
+                        email 'weijunyi@tencent.com'
+                    }
+                }
+            }
+        }
+    }
+}
