@@ -23,11 +23,14 @@ public class TLSSigAPI {
         this.key = key;
     }
 
-    private String hmacsha256(String identifier, long currTime, long expire) {
+    private String hmacsha256(String identifier, long currTime, long expire, String base64Userbuf) {
         String contentToBeSigned = "TLS.identifier:" + identifier + "\n"
                 + "TLS.sdkappid:" + sdkappid + "\n"
                 + "TLS.time:" + currTime + "\n"
                 + "TLS.expire:" + expire + "\n";
+        if (null != base64Userbuf) {
+            contentToBeSigned += "TLS.userbuf:" + base64Userbuf + "\n";
+        }
         try {
             byte[] byteKey = key.getBytes("UTF-8");
             Mac hmac = Mac.getInstance("HmacSHA256");
@@ -44,7 +47,7 @@ public class TLSSigAPI {
         }
     }
 
-    public String genSig(String identifier, long expire) {
+    private String genSig(String identifier, long expire, byte[] userbuf) {
 
         long currTime = System.currentTimeMillis()/1000;
 
@@ -54,7 +57,12 @@ public class TLSSigAPI {
         sigDoc.put("TLS.sdkappid", sdkappid);
         sigDoc.put("TLS.expire", expire);
         sigDoc.put("TLS.time", currTime);
-        String sig = hmacsha256(identifier, currTime, expire);
+
+        String base64UserBuf = null;
+        if (null != userbuf) {
+            base64UserBuf = new BASE64Encoder().encode(userbuf);
+        }
+        String sig = hmacsha256(identifier, currTime, expire, base64UserBuf);
         if (sig.length() == 0) {
             return "";
         }
@@ -66,5 +74,13 @@ public class TLSSigAPI {
         int compressedBytesLength = compressor.deflate(compressedBytes);
         compressor.end();
         return new String(Base64URL.base64EncodeUrl(Arrays.copyOfRange(compressedBytes, 0, compressedBytesLength)));
+    }
+
+    public String genSig(String identifier, long expire) {
+        return genSig(identifier, expire, null);
+    }
+
+    public String genSigWithUserBuf(String identifier, long expire, byte[] userbuf) {
+        return genSig(identifier, expire, userbuf);
     }
 }

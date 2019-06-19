@@ -34,6 +34,12 @@ public void testGenSig() throws Exception {
 } 
 
 
+@Test
+public void testGenSigWithUserBug() throws Exception {
+    TLSSigAPI api = new TLSSigAPI(1400000000, "5bd2850fff3ecb11d7c805251c51ee463a25727bddc2385f3fa8bfee1bb93b5e");
+    System.out.println(api.genSigWithUserBuf("xiaojun", 180*86400, "abc".getBytes()));
+}
+
 /** 
 * 
 * Method: hmacsha256(String identifier, long currTime, long expire) 
