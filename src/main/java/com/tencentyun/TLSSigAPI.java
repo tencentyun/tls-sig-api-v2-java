@@ -61,6 +61,7 @@ public class TLSSigAPI {
         String base64UserBuf = null;
         if (null != userbuf) {
             base64UserBuf = new BASE64Encoder().encode(userbuf);
+            sigDoc.put("TLS.userbuf", base64UserBuf);
         }
         String sig = hmacsha256(identifier, currTime, expire, base64UserBuf);
         if (sig.length() == 0) {
