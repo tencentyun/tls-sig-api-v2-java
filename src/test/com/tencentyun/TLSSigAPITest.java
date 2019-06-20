@@ -28,14 +28,14 @@ public void after() throws Exception {
 */ 
 @Test
 public void testGenSig() {
-    TLSSigAPI api = new TLSSigAPI(1400000000, "5bd2850fff3ecb11d7c805251c51ee463a25727bddc2385f3fa8bfee1bb93b5e");
+    TLSSigAPIv2 api = new TLSSigAPIv2(1400000000, "5bd2850fff3ecb11d7c805251c51ee463a25727bddc2385f3fa8bfee1bb93b5e");
     System.out.print(api.genSig("xiaojun", 180*86400));
 } 
 
 
 @Test
 public void testGenSigWithUserBug() {
-    TLSSigAPI api = new TLSSigAPI(1400000000, "5bd2850fff3ecb11d7c805251c51ee463a25727bddc2385f3fa8bfee1bb93b5e");
+    TLSSigAPIv2 api = new TLSSigAPIv2(1400000000, "5bd2850fff3ecb11d7c805251c51ee463a25727bddc2385f3fa8bfee1bb93b5e");
     System.out.println(api.genSigWithUserBuf("xiaojun", 180*86400, "abc".getBytes()));
 }
 
