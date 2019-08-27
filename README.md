@@ -8,7 +8,7 @@
     <dependency>
         <groupId>com.github.tencentyun</groupId>
         <artifactId>tls-sig-api-v2</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </dependency>
 </dependencies>
 ```
@@ -16,7 +16,7 @@
 ### gradle
 ```
 dependencies {
-    compile 'com.github.tencentyun:tls-sig-api-v2:1.0'
+    compile 'com.github.tencentyun:tls-sig-api-v2:1.1'
 }
 ```
 
