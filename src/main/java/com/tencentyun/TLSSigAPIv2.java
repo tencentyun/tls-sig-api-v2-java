@@ -37,7 +37,7 @@ public class TLSSigAPIv2 {
             SecretKeySpec keySpec = new SecretKeySpec(byteKey, "HmacSHA256");
             hmac.init(keySpec);
             byte[] byteSig = hmac.doFinal(contentToBeSigned.getBytes("UTF-8"));
-            return new BASE64Encoder().encode(byteSig);
+            return (new BASE64Encoder().encode(byteSig)).replaceAll("\\s*", "");
         } catch (UnsupportedEncodingException e) {
             return "";
         } catch (NoSuchAlgorithmException e) {
@@ -74,7 +74,8 @@ public class TLSSigAPIv2 {
         byte [] compressedBytes = new byte[2048];
         int compressedBytesLength = compressor.deflate(compressedBytes);
         compressor.end();
-        return new String(Base64URL.base64EncodeUrl(Arrays.copyOfRange(compressedBytes, 0, compressedBytesLength)));
+        return (new String(Base64URL.base64EncodeUrl(Arrays.copyOfRange(compressedBytes,
+                0, compressedBytesLength)))).replaceAll("\\s*", "");
     }
 
     public String genSig(String identifier, long expire) {

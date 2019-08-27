@@ -14,7 +14,7 @@ dependencies {
 }
 
 sourceCompatibility = 1.6
-version = '1.0'
+version = '1.1'
 group = "com.github.tencentyun"
 archivesBaseName = "tls-sig-api-v2"
 tasks.withType(JavaCompile) {
