@@ -77,6 +77,67 @@ public class TLSSigAPIv2 {
         return (new String(Base64URL.base64EncodeUrl(Arrays.copyOfRange(compressedBytes,
                 0, compressedBytesLength)))).replaceAll("\\s*", "");
     }
+    public byte[] genUserBuf(String account ,long dwAuthID, long dwExpTime ,
+                             long dwPrivilegeMap ,long dwAccountType){
+        //视频校验位需要用到的字段
+        /*
+         cVer    unsigned char/1 版本号，填0
+         wAccountLen unsigned short /2   第三方自己的帐号长度
+         buffAccount wAccountLen 第三方自己的帐号字符
+         dwSdkAppid  unsigned int/4  sdkappid
+         dwRoomId    unsigned int/4  群组号码
+         dwExpTime   unsigned int/4  过期时间 （当前时间 + 有效期（单位：秒，建议300秒））
+         dwPrivilegeMap  unsigned int/4  权限位
+         dwAccountType   unsigned int/4  第三方帐号类型
+         */
+        int accountLength = account.length();
+        int offset = 0;
+        byte[] userbuf = new byte[1+2+accountLength+4+4+4+4+4];
+
+        //cVer
+        userbuf[offset++] = 0;
+
+        //wAccountLen
+        userbuf[offset++] = (byte)((accountLength & 0xFF00) >> 8);
+        userbuf[offset++] = (byte)(accountLength & 0x00FF);
+
+        //buffAccount
+        for (; offset < 3 + accountLength; ++offset) {
+            userbuf[offset] = (byte)account.charAt(offset - 3);
+        }
+
+        //dwSdkAppid
+        userbuf[offset++] = (byte)((sdkappid & 0xFF000000) >> 24);
+        userbuf[offset++] = (byte)((sdkappid & 0x00FF0000) >> 16);
+        userbuf[offset++] = (byte)((sdkappid & 0x0000FF00) >> 8);
+        userbuf[offset++] = (byte)(sdkappid & 0x000000FF);
+
+        //dwAuthId
+        userbuf[offset++] = (byte)((dwAuthID & 0xFF000000) >> 24);
+        userbuf[offset++] = (byte)((dwAuthID & 0x00FF0000) >> 16);
+        userbuf[offset++] = (byte)((dwAuthID & 0x0000FF00) >> 8);
+        userbuf[offset++] = (byte)(dwAuthID & 0x000000FF);
+
+        //dwExpTime
+        userbuf[offset++] = (byte)((dwExpTime & 0xFF000000) >> 24);
+        userbuf[offset++] = (byte)((dwExpTime & 0x00FF0000) >> 16);
+        userbuf[offset++] = (byte)((dwExpTime & 0x0000FF00) >> 8);
+        userbuf[offset++] = (byte)(dwExpTime & 0x000000FF);
+
+        //dwPrivilegeMap
+        userbuf[offset++] = (byte)((dwPrivilegeMap & 0xFF000000) >> 24);
+        userbuf[offset++] = (byte)((dwPrivilegeMap & 0x00FF0000) >> 16);
+        userbuf[offset++] = (byte)((dwPrivilegeMap & 0x0000FF00) >> 8);
+        userbuf[offset++] = (byte)(dwPrivilegeMap & 0x000000FF);
+
+        //dwAccountType
+        userbuf[offset++] = (byte)((dwAccountType & 0xFF000000) >> 24);
+        userbuf[offset++] = (byte)((dwAccountType & 0x00FF0000) >> 16);
+        userbuf[offset++] = (byte)((dwAccountType & 0x0000FF00) >> 8);
+        userbuf[offset++] = (byte)(dwAccountType & 0x000000FF);
+
+        return userbuf;
+    }
 
     public String genSig(String identifier, long expire) {
         return genSig(identifier, expire, null);
