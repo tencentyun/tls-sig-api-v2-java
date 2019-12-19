@@ -77,6 +77,17 @@ public class TLSSigAPIv2 {
         return (new String(Base64URL.base64EncodeUrl(Arrays.copyOfRange(compressedBytes,
                 0, compressedBytesLength)))).replaceAll("\\s*", "");
     }
+    /**用于生成实时音视频(TRTC)业务进房权限加密串,具体用途用法参考TRTC文档：https://cloud.tencent.com/document/product/647/32240 
+    * TRTC业务进房权限加密串需使用用户定义的userbuf
+    * @brief 生成 userbuf
+    * @param account 用户名
+    * @param dwSdkappid sdkappid
+    * @param dwAuthID  数字房间号
+    * @param dwExpTime 过期时间：该权限加密串的过期时间，建议300秒，300秒内拿到该签名，并且发起进房间操作
+    * @param dwPrivilegeMap 用户权限，255表示所有权限
+    * @param dwAccountType 用户类型,默认为0
+    * @return byte[] userbuf
+    */
     public byte[] genUserBuf(String account ,long dwAuthID, long dwExpTime ,
                              long dwPrivilegeMap ,long dwAccountType){
         //视频校验位需要用到的字段
