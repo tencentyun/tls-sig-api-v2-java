@@ -156,9 +156,15 @@ public class TLSSigAPIv2 {
     public String genSig(String identifier, long expire) {
         return genSig(identifier, expire, null);
     }
-
-    public String genSigWithUserBuf(String identifier, long expire) {
-        byte[] userbuf = genUserBuf(identifier,1000,expire,255,0);  //生成userbuf
+    /*
+    * @param identifier 用户名
+    * @param  expire  超时时间
+    * @param privilege 用户权限，255表示所有权限，主播0xff，观众0xab
+    * @param dwAccountType 用户类型,默认为0
+    * @return byte[] userbuf
+    */
+    public String genSigWithUserBuf(String identifier, long expire,long roomnum, long privilege) {
+        byte[] userbuf = genUserBuf(identifier,roomnum,expire,privilege,0);  //生成userbuf
         return genSig(identifier, expire, userbuf);
     }
 }
