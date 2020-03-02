@@ -84,6 +84,7 @@ public class TLSSigAPIv2 {
     * @param dwSdkappid sdkappid
     * @param dwAuthID  数字房间号
     * @param dwExpTime 过期时间：该权限加密串的过期时间，超时时间内拿到该签名，并且发起进房间操作，时间为有效期
+    * 实际填入userBuf为：expire，过期时间,当前时间 + 有效期（单位：秒）
     * @param dwPrivilegeMap 用户权限，255表示所有权限，主播0xff，观众0xab
     * @param dwAccountType 用户类型,默认为0
     * @return byte[] userbuf
@@ -129,11 +130,13 @@ public class TLSSigAPIv2 {
         userbuf[offset++] = (byte)((dwAuthID & 0x0000FF00) >> 8);
         userbuf[offset++] = (byte)(dwAuthID & 0x000000FF);
 
-        //dwExpTime，过期时间
-        userbuf[offset++] = (byte)((dwExpTime & 0xFF000000) >> 24);
-        userbuf[offset++] = (byte)((dwExpTime & 0x00FF0000) >> 16);
-        userbuf[offset++] = (byte)((dwExpTime & 0x0000FF00) >> 8);
-        userbuf[offset++] = (byte)(dwExpTime & 0x000000FF);
+        //expire，过期时间,当前时间 + 有效期（单位：秒）
+        long currTime = System.currentTimeMillis()/1000;
+        long  expire = currTime + dwExpTime;
+        userbuf[offset++] = (byte)((expire & 0xFF000000) >> 24);
+        userbuf[offset++] = (byte)((expire & 0x00FF0000) >> 16);
+        userbuf[offset++] = (byte)((expire & 0x0000FF00) >> 8);
+        userbuf[offset++] = (byte)(expire & 0x000000FF);
 
         //dwPrivilegeMap，权限位
         userbuf[offset++] = (byte)((dwPrivilegeMap & 0xFF000000) >> 24);
