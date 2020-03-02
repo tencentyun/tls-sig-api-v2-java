@@ -32,12 +32,11 @@ public void testGenSig() {
     System.out.print(api.genSig("xiaojun", 180*86400));
 } 
 
-
+//使用userbuf生产privatemapkey
 @Test
 public void testGenSigWithUserBug() {
     TLSSigAPIv2 api = new TLSSigAPIv2(1400000000, "5bd2850fff3ecb11d7c805251c51ee463a25727bddc2385f3fa8bfee1bb93b5e");
-    byte[] userbuf = genUserBuf("xiaojun",10000,180*86400,255,0);
-    System.out.println(api.genSigWithUserBuf("xiaojun", 180*86400, userbuf));
+    System.out.println(api.genSigWithUserBuf("xiaojun", 180*86400));
 }
 
 /** 

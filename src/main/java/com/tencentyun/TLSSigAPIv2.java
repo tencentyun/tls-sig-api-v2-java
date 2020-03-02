@@ -83,22 +83,22 @@ public class TLSSigAPIv2 {
     * @param account 用户名
     * @param dwSdkappid sdkappid
     * @param dwAuthID  数字房间号
-    * @param dwExpTime 过期时间：该权限加密串的过期时间，建议300秒，300秒内拿到该签名，并且发起进房间操作
-    * @param dwPrivilegeMap 用户权限，255表示所有权限
+    * @param dwExpTime 过期时间：该权限加密串的过期时间，超时时间内拿到该签名，并且发起进房间操作，时间为有效期
+    * @param dwPrivilegeMap 用户权限，255表示所有权限，主播0xff，观众0xab
     * @param dwAccountType 用户类型,默认为0
     * @return byte[] userbuf
     */
     public byte[] genUserBuf(String account ,long dwAuthID, long dwExpTime ,
                              long dwPrivilegeMap ,long dwAccountType){
-        //视频校验位需要用到的字段
+        //视频校验位需要用到的字段,按照网络字节序放入buf中
         /*
          cVer    unsigned char/1 版本号，填0
          wAccountLen unsigned short /2   第三方自己的帐号长度
-         buffAccount wAccountLen 第三方自己的帐号字符
+         account wAccountLen 第三方自己的帐号字符
          dwSdkAppid  unsigned int/4  sdkappid
-         dwRoomId    unsigned int/4  群组号码
-         dwExpTime   unsigned int/4  过期时间 （当前时间 + 有效期（单位：秒，建议300秒））
-         dwPrivilegeMap  unsigned int/4  权限位
+         dwAuthID    unsigned int/4  群组号码
+         dwExpTime   unsigned int/4  过期时间 ，直接使用填入的值
+         dwPrivilegeMap  unsigned int/4  权限位，主播0xff，观众0xab
          dwAccountType   unsigned int/4  第三方帐号类型
          */
         int accountLength = account.length();
@@ -112,7 +112,7 @@ public class TLSSigAPIv2 {
         userbuf[offset++] = (byte)((accountLength & 0xFF00) >> 8);
         userbuf[offset++] = (byte)(accountLength & 0x00FF);
 
-        //buffAccount
+        //account
         for (; offset < 3 + accountLength; ++offset) {
             userbuf[offset] = (byte)account.charAt(offset - 3);
         }
@@ -123,25 +123,25 @@ public class TLSSigAPIv2 {
         userbuf[offset++] = (byte)((sdkappid & 0x0000FF00) >> 8);
         userbuf[offset++] = (byte)(sdkappid & 0x000000FF);
 
-        //dwAuthId
+        //dwAuthId,房间号
         userbuf[offset++] = (byte)((dwAuthID & 0xFF000000) >> 24);
         userbuf[offset++] = (byte)((dwAuthID & 0x00FF0000) >> 16);
         userbuf[offset++] = (byte)((dwAuthID & 0x0000FF00) >> 8);
         userbuf[offset++] = (byte)(dwAuthID & 0x000000FF);
 
-        //dwExpTime
+        //dwExpTime，过期时间
         userbuf[offset++] = (byte)((dwExpTime & 0xFF000000) >> 24);
         userbuf[offset++] = (byte)((dwExpTime & 0x00FF0000) >> 16);
         userbuf[offset++] = (byte)((dwExpTime & 0x0000FF00) >> 8);
         userbuf[offset++] = (byte)(dwExpTime & 0x000000FF);
 
-        //dwPrivilegeMap
+        //dwPrivilegeMap，权限位
         userbuf[offset++] = (byte)((dwPrivilegeMap & 0xFF000000) >> 24);
         userbuf[offset++] = (byte)((dwPrivilegeMap & 0x00FF0000) >> 16);
         userbuf[offset++] = (byte)((dwPrivilegeMap & 0x0000FF00) >> 8);
         userbuf[offset++] = (byte)(dwPrivilegeMap & 0x000000FF);
 
-        //dwAccountType
+        //dwAccountType，账户类型
         userbuf[offset++] = (byte)((dwAccountType & 0xFF000000) >> 24);
         userbuf[offset++] = (byte)((dwAccountType & 0x00FF0000) >> 16);
         userbuf[offset++] = (byte)((dwAccountType & 0x0000FF00) >> 8);
@@ -154,7 +154,8 @@ public class TLSSigAPIv2 {
         return genSig(identifier, expire, null);
     }
 
-    public String genSigWithUserBuf(String identifier, long expire, byte[] userbuf) {
+    public String genSigWithUserBuf(String identifier, long expire) {
+        byte[] userbuf = genUserBuf(identifier,1000,expire,255,0);  //生成userbuf
         return genSig(identifier, expire, userbuf);
     }
 }
