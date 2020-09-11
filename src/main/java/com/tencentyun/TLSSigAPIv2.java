@@ -172,11 +172,13 @@ public class TLSSigAPIv2 {
         int roomStrLength = RoomStr.length();
         int offset = 0;
         int bufLength = 1 + 2 + accountLength + 20 ;
+        if (roomStrLength > 0) {
+            bufLength = bufLength + 2 + roomStrLength;
+        }
         byte[] userbuf = new byte[bufLength];
 
         //cVer
         if (roomStrLength > 0) {
-            bufLength = bufLength + 2 + roomStrLength;
             userbuf[offset++] = 1;
         } else {
             userbuf[offset++] = 0;
