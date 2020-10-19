@@ -43,6 +43,6 @@ public class Base64URL {
                 default:
                     break;
             }
-        return new BASE64Decoder().decodeBuffer(base64.toString());
+        return new BASE64Decoder().decodeBuffer(new String(base64));
     }
 }
