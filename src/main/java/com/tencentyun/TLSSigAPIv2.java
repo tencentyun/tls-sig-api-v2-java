@@ -65,7 +65,7 @@ public class TLSSigAPIv2 {
      * @return usersig - 生成带userbuf的签名
      */
     public String genPrivateMapKey(String userid, long expire, long roomid, long privilegeMap) {
-        byte[] userbuf = genUserBuf(userid, roomid, expire, privilegeMap, 0, null);  //生成userbuf
+        byte[] userbuf = genUserBuf(userid, roomid, expire, privilegeMap, 0, "");  //生成userbuf
         return genUserSig(userid, expire, userbuf);
     }
 
