@@ -16,7 +16,7 @@
 ### gradle
 ```
 dependencies {
-    compile 'com.github.tencentyun:tls-sig-api-v2:1.1'
+    compile 'com.github.tencentyun:tls-sig-api-v2:2.0'
 }
 ```
 

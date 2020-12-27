@@ -13,8 +13,8 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-sourceCompatibility = 1.6
-version = '1.2'
+sourceCompatibility = 1.8
+version = '2.0'
 group = "com.github.tencentyun"
 archivesBaseName = "tls-sig-api-v2"
 tasks.withType(JavaCompile) {

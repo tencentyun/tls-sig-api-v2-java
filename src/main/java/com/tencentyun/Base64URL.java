@@ -1,15 +1,10 @@
 package com.tencentyun;
 
-// 使用旧版本 base64 编解码实现增强兼容性
-
-import sun.misc.BASE64Encoder;
-import sun.misc.BASE64Decoder;
-
-import java.io.IOException;
+import java.util.Base64;
 
 public class Base64URL {
     public static byte[] base64EncodeUrl(byte[] input) {
-        byte[] base64 = new BASE64Encoder().encode(input).getBytes();
+        byte[] base64 = Base64.getEncoder().encode(input);
         for (int i = 0; i < base64.length; ++i)
             switch (base64[i]) {
                 case '+':
@@ -25,24 +20,5 @@ public class Base64URL {
                     break;
             }
         return base64;
-    }
-
-    public static byte[] base64DecodeUrl(byte[] input) throws IOException {
-        byte[] base64 = input.clone();
-        for (int i = 0; i < base64.length; ++i)
-            switch (base64[i]) {
-                case '*':
-                    base64[i] = '+';
-                    break;
-                case '-':
-                    base64[i] = '/';
-                    break;
-                case '_':
-                    base64[i] = '=';
-                    break;
-                default:
-                    break;
-            }
-        return new BASE64Decoder().decodeBuffer(new String(base64));
     }
 }
