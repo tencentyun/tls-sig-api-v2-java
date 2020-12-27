@@ -1,6 +1,8 @@
 ## 说明
 本项目为 tls-sig-api-v2 版本的 java 实现，之前非对称密钥无法使用此版本 api，如需使用请查看[这里](https://github.com/tencentyun/tls-sig-api-java)。
 
+当前分支适用于 jdk 1.7 即及以下版本，原则上会停止更新。
+
 ## 集成
 ### maven
 ``` xml
@@ -16,7 +18,7 @@
 ### gradle
 ```
 dependencies {
-    compile 'com.github.tencentyun:tls-sig-api-v2:1.1'
+    compile 'com.github.tencentyun:tls-sig-api-v2:1.2'
 }
 ```
 
