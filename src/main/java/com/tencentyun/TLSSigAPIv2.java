@@ -17,8 +17,8 @@ import javax.crypto.spec.SecretKeySpec;
 import org.json.JSONObject;
 
 public class TLSSigAPIv2 {
-    private long sdkappid;
-    private String key;
+    final private long sdkappid;
+    final private String key;
 
     public TLSSigAPIv2(long sdkappid, String key) {
         this.sdkappid = sdkappid;
