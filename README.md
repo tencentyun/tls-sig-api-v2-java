@@ -8,7 +8,7 @@
     <dependency>
         <groupId>com.github.tencentyun</groupId>
         <artifactId>tls-sig-api-v2</artifactId>
-        <version>1.1</version>
+        <version>2.0</version>
     </dependency>
 </dependencies>
 ```
