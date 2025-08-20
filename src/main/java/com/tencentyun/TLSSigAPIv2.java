@@ -12,6 +12,29 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.json.JSONObject;
 
+import java.util.Base64;
+
+class Base64URL {
+    public static byte[] base64EncodeUrl(byte[] input) {
+        byte[] base64 = Base64.getEncoder().encode(input);
+        for (int i = 0; i < base64.length; ++i)
+            switch (base64[i]) {
+                case '+':
+                    base64[i] = '*';
+                    break;
+                case '/':
+                    base64[i] = '-';
+                    break;
+                case '=':
+                    base64[i] = '_';
+                    break;
+                default:
+                    break;
+            }
+        return base64;
+    }
+}
+
 public class TLSSigAPIv2 {
     final private long sdkappid;
     final private String key;
@@ -39,7 +62,7 @@ public class TLSSigAPIv2 {
      * @param userid - User ID. The value can be up to 32 bytes in length and contain letters (a-z and A-Z), digits (0-9), underscores (_), and hyphens (-).
      * @param expire - UserSig expiration time, in seconds. For example, 86400 indicates that the generated UserSig will expire one day after being generated.
      * @return usersig - Generated signature.
-     */ 
+     */
     public String genUserSig(String userid, long expire) {
         return genUserSig(userid, expire, null);
     }
@@ -75,26 +98,26 @@ public class TLSSigAPIv2 {
      * Function:
      * Used to issue PrivateMapKey that is optional for room entry.
      * PrivateMapKey must be used together with UserSig but with more powerful permission control capabilities.
-     *  - UserSig can only control whether a UserID has permission to use the TRTC service. As long as the UserSig is correct, the user with the corresponding UserID can enter or leave any room.
-     *  - PrivateMapKey specifies more stringent permissions for a UserID, including whether the UserID can be used to enter a specific room and perform audio/video upstreaming in the room.
+     * - UserSig can only control whether a UserID has permission to use the TRTC service. As long as the UserSig is correct, the user with the corresponding UserID can enter or leave any room.
+     * - PrivateMapKey specifies more stringent permissions for a UserID, including whether the UserID can be used to enter a specific room and perform audio/video upstreaming in the room.
      * To enable stringent PrivateMapKey permission bit verification, you need to enable permission key in TRTC console > Application Management > Application Info.
-     *
+     * <p>
      * Parameter description:
      *
-     * @param userid - User ID. The value can be up to 32 bytes in length and contain letters (a-z and A-Z), digits (0-9), underscores (_), and hyphens (-).
-     * @param roomid - ID of the room to which the specified UserID can enter.
-     * @param expire - PrivateMapKey expiration time, in seconds. For example, 86400 indicates that the generated PrivateMapKey will expire one day after being generated.
+     * @param userid       - User ID. The value can be up to 32 bytes in length and contain letters (a-z and A-Z), digits (0-9), underscores (_), and hyphens (-).
+     * @param roomid       - ID of the room to which the specified UserID can enter.
+     * @param expire       - PrivateMapKey expiration time, in seconds. For example, 86400 indicates that the generated PrivateMapKey will expire one day after being generated.
      * @param privilegeMap - Permission bits. Eight bits in the same byte are used as the permission switches of eight specific features:
-                        *  - Bit 1: 0000 0001 = 1, permission for room creation
-                        *  - Bit 2: 0000 0010 = 2, permission for room entry
-                        *  - Bit 3: 0000 0100 = 4, permission for audio sending
-                        *  - Bit 4: 0000 1000 = 8, permission for audio receiving
-                        *  - Bit 5: 0001 0000 = 16, permission for video sending
-                        *  - Bit 6: 0010 0000 = 32, permission for video receiving
-                        *  - Bit 7: 0100 0000 = 64, permission for substream video sending (screen sharing)
-                        *  - Bit 8: 1000 0000 = 200, permission for substream video receiving (screen sharing)
-                        *  - privilegeMap == 1111 1111 == 255: Indicates that the UserID has all feature permissions of the room specified by roomid.
-                        *  - privilegeMap == 0010 1010 == 42: Indicates that the UserID has only the permissions to enter the room and receive audio/video data.
+     *                     - Bit 1: 0000 0001 = 1, permission for room creation
+     *                     - Bit 2: 0000 0010 = 2, permission for room entry
+     *                     - Bit 3: 0000 0100 = 4, permission for audio sending
+     *                     - Bit 4: 0000 1000 = 8, permission for audio receiving
+     *                     - Bit 5: 0001 0000 = 16, permission for video sending
+     *                     - Bit 6: 0010 0000 = 32, permission for video receiving
+     *                     - Bit 7: 0100 0000 = 64, permission for substream video sending (screen sharing)
+     *                     - Bit 8: 1000 0000 = 200, permission for substream video receiving (screen sharing)
+     *                     - privilegeMap == 1111 1111 == 255: Indicates that the UserID has all feature permissions of the room specified by roomid.
+     *                     - privilegeMap == 0010 1010 == 42: Indicates that the UserID has only the permissions to enter the room and receive audio/video data.
      * @return usersig - Generate signature with userbuf
      */
     public String genPrivateMapKey(String userid, long expire, long roomid, long privilegeMap) {
@@ -133,27 +156,26 @@ public class TLSSigAPIv2 {
      * Function:
      * Used to issue PrivateMapKey that is optional for room entry.
      * PrivateMapKey must be used together with UserSig but with more powerful permission control capabilities.
-     *  - UserSig can only control whether a UserID has permission to use the TRTC service. As long as the UserSig is correct, the user with the corresponding UserID can enter or leave any room.
-     *  - PrivateMapKey specifies more stringent permissions for a UserID, including whether the UserID can be used to enter a specific room and perform audio/video upstreaming in the room.
+     * - UserSig can only control whether a UserID has permission to use the TRTC service. As long as the UserSig is correct, the user with the corresponding UserID can enter or leave any room.
+     * - PrivateMapKey specifies more stringent permissions for a UserID, including whether the UserID can be used to enter a specific room and perform audio/video upstreaming in the room.
      * To enable stringent PrivateMapKey permission bit verification, you need to enable permission key in TRTC console > Application Management > Application Info.
-     *
+     * <p>
      * Parameter description:
      *
-     *
-     * @param userid - User ID. The value can be up to 32 bytes in length and contain letters (a-z and A-Z), digits (0-9), underscores (_), and hyphens (-).
-     * @param roomid - ID of the room to which the specified UserID can enter.
-     * @param expire - PrivateMapKey expiration time, in seconds. For example, 86400 indicates that the generated PrivateMapKey will expire one day after being generated.
+     * @param userid       - User ID. The value can be up to 32 bytes in length and contain letters (a-z and A-Z), digits (0-9), underscores (_), and hyphens (-).
+     * @param roomid       - ID of the room to which the specified UserID can enter.
+     * @param expire       - PrivateMapKey expiration time, in seconds. For example, 86400 indicates that the generated PrivateMapKey will expire one day after being generated.
      * @param privilegeMap - Permission bits. Eight bits in the same byte are used as the permission switches of eight specific features:
-                        *  - Bit 1: 0000 0001 = 1, permission for room creation
-                        *  - Bit 2: 0000 0010 = 2, permission for room entry
-                        *  - Bit 3: 0000 0100 = 4, permission for audio sending
-                        *  - Bit 4: 0000 1000 = 8, permission for audio receiving
-                        *  - Bit 5: 0001 0000 = 16, permission for video sending
-                        *  - Bit 6: 0010 0000 = 32, permission for video receiving
-                        *  - Bit 7: 0100 0000 = 64, permission for substream video sending (screen sharing)
-                        *  - Bit 8: 1000 0000 = 200, permission for substream video receiving (screen sharing)
-                        *  - privilegeMap == 1111 1111 == 255: Indicates that the UserID has all feature permissions of the room specified by roomid.
-                        *  - privilegeMap == 0010 1010 == 42: Indicates that the UserID has only the permissions to enter the room and receive audio/video data.
+     *                     - Bit 1: 0000 0001 = 1, permission for room creation
+     *                     - Bit 2: 0000 0010 = 2, permission for room entry
+     *                     - Bit 3: 0000 0100 = 4, permission for audio sending
+     *                     - Bit 4: 0000 1000 = 8, permission for audio receiving
+     *                     - Bit 5: 0001 0000 = 16, permission for video sending
+     *                     - Bit 6: 0010 0000 = 32, permission for video receiving
+     *                     - Bit 7: 0100 0000 = 64, permission for substream video sending (screen sharing)
+     *                     - Bit 8: 1000 0000 = 200, permission for substream video receiving (screen sharing)
+     *                     - privilegeMap == 1111 1111 == 255: Indicates that the UserID has all feature permissions of the room specified by roomid.
+     *                     - privilegeMap == 0010 1010 == 42: Indicates that the UserID has only the permissions to enter the room and receive audio/video data.
      * @return usersig - Generate signature with userbuf
      */
     public String genPrivateMapKeyWithStringRoomID(String userid, long expire, String roomstr, long privilegeMap) {
@@ -226,7 +248,7 @@ public class TLSSigAPIv2 {
          dwAccountType   unsigned int/4  第三方帐号类型
          */
 
-         //The fields required for the video check digit are placed in buf according to the network byte order.
+        //The fields required for the video check digit are placed in buf according to the network byte order.
         /*
          cVer    unsigned char/1 Version number, fill in 0
          wAccountLen unsigned short /2   Third party's own account length
@@ -240,7 +262,7 @@ public class TLSSigAPIv2 {
         int accountLength = account.length();
         int roomStrLength = RoomStr.length();
         int offset = 0;
-        int bufLength = 1 + 2 + accountLength + 20 ;
+        int bufLength = 1 + 2 + accountLength + 20;
         if (roomStrLength > 0) {
             bufLength = bufLength + 2 + roomStrLength;
         }
